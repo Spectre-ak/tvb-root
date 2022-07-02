@@ -43,8 +43,11 @@ class ResourceAccessPermission:
         self.required_role = required_role
 
     def has_access(self):
+        print("has_Access is here...........")
         current_user = get_current_user()
+        print(current_user)
         if self.required_role is not None and current_user.role != self.required_role:
+            print("Returnign false... why here....asdasd")
             return False
         return self._check_permission(current_user.id)
 
@@ -60,27 +63,48 @@ class ProjectAccessPermission(ResourceAccessPermission):
     def __init__(self, project_gid):
         super(ProjectAccessPermission, self).__init__(project_gid)
         self.project_dao = CaseDAO()
+        print("project access premisson init")
 
     def _check_permission(self, logged_user_id):
+        print("checl permission project acces permission is here")
+        print(logged_user_id)
+        print(self.resource_identifier)
+        print("")
         try:
             project = self.project_dao.get_project_lazy_by_gid(self.resource_identifier)
+            print(project)
+            print(project.id)
         except (ProjectServiceException, NoResultFound):
+            print("execption occured....asd.a.sd")
+            print(InvalidIdentifierException())
             raise InvalidIdentifierException()
+        
+        print("project is not null, valid")
         return self.check_project_permission(logged_user_id, project.id)
 
     def check_project_permission(self, logged_user_id, project_id):
         project_members = self.project_dao.get_members_of_project(project_id)
+        print(project_members)
+        print("here is the projec members")
+        print(logged_user_id)
+        res = logged_user_id in [project_member.id for project_member in project_members]
+        print(res) 
         return logged_user_id in [project_member.id for project_member in project_members]
 
 
 class OperationAccessPermission(ProjectAccessPermission):
     def __init__(self, operation_gid):
+        print("init OperationAccessPermission")
         super(OperationAccessPermission, self).__init__(operation_gid)
 
     def _check_permission(self, logged_user_id):
+        print("operations check permissinon")
         operation = ProjectService.load_operation_by_gid(self.resource_identifier)
+        print(operation)
         if operation is None:
+            print("operation is none here, raisingn InvalidIdentifierException ")
             raise InvalidIdentifierException()
+        print("returning from operartionAccesPermission _checkPermisson")
         return self.check_project_permission(logged_user_id, operation.fk_launched_in)
 
 

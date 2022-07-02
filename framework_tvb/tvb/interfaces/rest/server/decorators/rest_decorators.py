@@ -109,7 +109,12 @@ def check_permission(resource_access_permission_class, requested_resource_identi
         def deco(*a, **b):
             try:
                 identifier = b[requested_resource_identifier_name]
+                print(identifier)
+                print("rest decorator funciton is hrere")
                 access_permission_instance = resource_access_permission_class(identifier)
+                print(access_permission_instance)
+                print(access_permission_instance.has_access())
+                
                 if access_permission_instance.has_access():
                     return func(*a, **b)
             except KeyError:

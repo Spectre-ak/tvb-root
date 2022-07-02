@@ -40,22 +40,43 @@ def handle_response(func):
         result = func(*a, **b)
         response = result
         classz = None
+        print("hadle_Response decorotators")
+        print(response)
+        print(result)
 
         if isinstance(result, tuple):
+            print("isinstance")
             response = result[0]
             classz = result[1]
+            print(response)
+            print(classz)
 
         content = response.content
         successful_call = response.ok
+        print("content isn ")
+        print(content)
+        print(successful_call)
 
         if successful_call:
+            print("successful_call is trye")
             if classz is not None:
+                print("classz is not none")
+                print(
+                    json.loads(content.decode('utf-8'),
+                                  object_hook=lambda d: classz(**d) if '__type__' not in d
+                                  else CustomDecoder.custom_hook(d))
+                )
                 return json.loads(content.decode('utf-8'),
                                   object_hook=lambda d: classz(**d) if '__type__' not in d
                                   else CustomDecoder.custom_hook(d))
+            print(json.loads(content.decode('utf-8'), cls=CustomDecoder))
             return json.loads(content.decode('utf-8'), cls=CustomDecoder)
 
+        print("successful_callis not true")
+        
+
         decoded_dict = json.loads(content.decode('utf-8'))
+        print(decoded_dict)
         try:
             error_message = decoded_dict['message']
         except KeyError:

@@ -107,7 +107,7 @@ class GetProjectsListResource(RestResource):
 
     def post(self):
         """
-        Create a new project linked to the current user
+        Create a new project linked to the current user .....................
         """
         input_data = flask.request.json
         try:

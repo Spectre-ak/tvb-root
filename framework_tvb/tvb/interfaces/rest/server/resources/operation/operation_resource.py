@@ -68,11 +68,15 @@ class LaunchOperationResource(RestResource):
         self.logger = get_logger(self.__class__.__module__)
         self.operation_facade = OperationFacade()
 
+        print("rest resource LaunchOperationResource init funtios is hrer")
+        
+
     @check_permission(ProjectAccessPermission, 'project_gid')
     def post(self, project_gid, algorithm_module, algorithm_classname):
         """
         :generic method of launching Analyzers
         """
+        print("operations post requies is herer")
         model_file = self.extract_file_from_request(request_file_key=RequestFileKey.LAUNCH_ANALYZERS_MODEL_FILE.value)
         current_user = get_current_user()
         operation_gid = self.operation_facade.launch_operation(current_user.id, model_file, project_gid,

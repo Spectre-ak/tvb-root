@@ -60,10 +60,14 @@ class MainApi:
         based on the refreshed token.
         :return: secured request session
         """
+        print("genrating rest client request now.......")
         if self.token_expiry_date is not None and datetime.now() >= self.token_expiry_date \
                 and self.refresh_token is not None:
+            print("updating tokens now........")
             refresh_token_response = self._refresh_token()
             self.update_tokens(refresh_token_response)
+        print("retrurning requests now")
+
         return self._build_request()
 
     def _build_request(self):
@@ -71,14 +75,17 @@ class MainApi:
         Build a secured request protected by the authorization token set before, used in the entire session
         :return: secured requests session
         """
-
+        print("building requests now....")
         authorization_header = {Strings.AUTH_HEADER.value: Strings.BEARER.value + self.authorization_token}
         with requests.Session() as request_session:
             request_session.headers.update(authorization_header)
+            print(request_session)
+            print("returniing requiest session")
             return request_session
 
     @handle_response
     def _refresh_token(self):
+        print("refresing the token now....")
         return self._build_request().put(self.build_request_url(RestLink.LOGIN.compute_url(True)), json={
             FormKeyInput.KEYCLOAK_REFRESH_TOKEN.value: self.refresh_token,
         })

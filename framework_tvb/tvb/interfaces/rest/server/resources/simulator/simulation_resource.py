@@ -68,3 +68,4 @@ class FireSimulationResource(RestResource):
 
         simulation_gid = self.simulation_facade.launch_simulation(get_current_user().id, zip_directory, project_gid)
         return simulation_gid, HTTP_STATUS_CREATED
+

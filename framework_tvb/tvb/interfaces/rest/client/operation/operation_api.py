@@ -58,8 +58,14 @@ class OperationApi(MainApi):
 
     @handle_response
     def launch_operation(self, project_gid, algorithm_class, view_model, temp_folder):
-        h5_file_path = h5.store_view_model(view_model, temp_folder)
+        print("launch respnse is called and its here.......... operation_api.py ")
+        print(project_gid)
+        print(algorithm_class)
+        print(view_model)
+        print(temp_folder)
 
+        h5_file_path = h5.store_view_model(view_model, temp_folder)
+        
         model_file_obj = open(h5_file_path, 'rb')
         files = {RequestFileKey.LAUNCH_ANALYZERS_MODEL_FILE.value: (os.path.basename(h5_file_path), model_file_obj)}
 
@@ -68,12 +74,20 @@ class OperationApi(MainApi):
                 path = getattr(view_model, key)
                 data_file_obj = open(path, 'rb')
                 files[key] = (os.path.basename(path), data_file_obj)
-
+        print("asdasd")
+        print(files)
+        print(RestLink.LAUNCH_OPERATION.compute_url(True, {
+            LinkPlaceholder.PROJECT_GID.value: project_gid,
+            LinkPlaceholder.ALG_MODULE.value: algorithm_class.__module__,
+            LinkPlaceholder.ALG_CLASSNAME.value: algorithm_class.__name__
+        }))
         return self.secured_request().post(self.build_request_url(RestLink.LAUNCH_OPERATION.compute_url(True, {
             LinkPlaceholder.PROJECT_GID.value: project_gid,
             LinkPlaceholder.ALG_MODULE.value: algorithm_class.__module__,
             LinkPlaceholder.ALG_CLASSNAME.value: algorithm_class.__name__
-        })), files=files)
+        }) 
+        
+        ), files=files)
 
     def quick_launch_operation(self, project_gid, algorithm_dto, datatype_gid, temp_folder):
         adapter_class = ABCAdapter.determine_adapter_class(algorithm_dto)
