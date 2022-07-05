@@ -1,7 +1,0 @@
-{
-    "NumberOfRows": 68,
-    "NumberOfColumns": 68,
-    "Units": "s",
-    "SamplingPeriod": 0.5,
-    "Description": "BOLD time steps of the simulated time series."
-}

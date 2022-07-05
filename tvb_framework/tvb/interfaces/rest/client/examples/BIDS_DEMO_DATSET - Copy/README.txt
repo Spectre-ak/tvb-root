@@ -1,1 +1,0 @@
-This is a data set of 50 healthy subjects based on simultaneous EEG-fMRI and also DTI data recorded at the Charité Berlin.

@@ -1,6 +1,0 @@
-{
-    "NumberOfRows": 10000,
-    "NumberOfColumns": 3,
-    "Units": "",
-    "Description": "Normals of cortex surface triangulation vertices."
-}
