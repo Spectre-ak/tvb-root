@@ -1,0 +1,14 @@
+{
+    "NumberOfRows": 68,
+    "NumberOfColumns": 68,
+    "CoordsRows": [
+		"../../coord/desc-50healthy_labels.json",
+		"../../coord/desc-50healthy_nodes.json"
+	],
+    "CoordsColumns": [
+		"../coord/desc-50healthy_labels.json",
+		"../coord/desc-50healthy_nodes.json"
+	],
+    "Description": "These tract lengths were derived from individual DTI data in mm.",
+	"Delimiter": " "
+}

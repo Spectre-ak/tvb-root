@@ -1,0 +1,24 @@
+{
+    "NumberOfRows": 68,
+    "NumberOfColumns": 68,
+    "CoordsRows": [
+		"../coord/desc-50healthy_labels.json",
+		"../coord/desc-50healthy_nodes.json"
+	],
+    "CoordsColumns": [
+		"../coord/desc-50healthy_labels.json",
+		"../coord/desc-50healthy_nodes.json"
+	],
+    "ModelEq": "../../eq/desc-50healthy-alpha.xml",
+    "ModelParam": "../../param/desc-50healthy_alpha.xml",     
+    "SourceCode": "https://github.com/the-virtual-brain/tvb-framework/tree/1.5",
+    "SourceCodeVersion": "1.5",
+    "SoftwareVersion": "1.5",
+    "SoftwareName": "The Virtual Brain",
+    "SoftwareRepository":"MISSING", 
+    "Network": [
+		"../net/desc-50healthy_weights.json",
+        "../net/desc-50healthy_distances.json"
+	],
+    "Description": "This is the empirical FC matrix based on resting-state fMRI data of subject 1."
+}

@@ -1,0 +1,6 @@
+{
+    "NumberOfRows": 10000,
+    "NumberOfColumns": 3,
+    "Units": "m",
+    "Description": "Vertices of cortex surface triangulation."
+}

@@ -1,0 +1,6 @@
+{
+    "NumberOfRows": 68,
+    "NumberOfColumns": 68,
+    "Units": "ms",
+    "Description": "Time steps of the simulated time series."
+}

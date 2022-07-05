@@ -1,0 +1,9 @@
+{
+    "ModelEq": "../eq/desc-50healthy-delta.xml",
+    "SourceCode": "https://github.com/the-virtual-brain/tvb-framework/tree/1.5",
+    "SourceCodeVersion": "1.5",
+    "SoftwareVersion": "1.5",
+    "SoftwareName": "The Virtual Brain",
+    "SoftwareRepository":"MISSING", 
+    "Description": "These are the global parameter values for the SJHMR3D model."
+}
