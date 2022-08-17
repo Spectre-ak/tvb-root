@@ -1,22 +1,11 @@
-from logging import root
-from operator import contains
 import os
 import json
-from typing import Set
 import uuid
-from distutils.dir_util import copy_tree
-import shutil
+from zipfile import ZipFile
 
 from tvb.adapters.uploaders.csv_connectivity_importer import CSVConnectivityImporterModel
 from tvb.adapters.uploaders.csv_connectivity_importer import CSVDelimiterOptionsEnum
-
-from tvb.adapters.analyzers.bct_adapters import BaseBCTModel
-from tvb.adapters.analyzers.bct_degree_adapters import Degree
-from tvb.adapters.uploaders.region_mapping_importer import RegionMappingImporterModel, RegionMappingImporter
-from tvb.adapters.uploaders.zip_connectivity_importer import ZIPConnectivityImporterModel, ZIPConnectivityImporter
-from tvb.adapters.uploaders.zip_surface_importer import ZIPSurfaceImporterModel, ZIPSurfaceImporter
 from tvb.basic.logger.builder import get_logger
-from tvb.datatypes.surfaces import SurfaceTypesEnum
 from tvb.interfaces.rest.client.examples.utils import compute_tvb_data_path, monitor_operation, compute_rest_url
 from tvb.interfaces.rest.client.tvb_client import TVBClient
 from tvb.adapters.uploaders.csv_connectivity_importer import CSVConnectivityImporter, CSVConnectivityImporterForm
@@ -54,6 +43,11 @@ def filter(arr, sub_str):
 
 # print(os.listdir(sub_dir))
 
+def create_archive(files_list, zip_name, base_dir):
+    base_dir_name = os.path.dirname(base_dir)
+    with ZipFile(zip_name, 'w') as myzip:
+        for file_name in files_list:
+            myzip.write(file_name, arcname=file_name.split(base_dir_name)[1])
 
 
 def upload_bids_data(tvb_client_instance):
@@ -88,7 +82,7 @@ def create_bids_dataset(bids_data_to_import, bids_root_dir, bids_file_base_dir, 
     temp_bids_dir = bids_file_base_dir + '/' + temp_bids_dir_name
     print(temp_bids_dir)
     temp_bids_zip_dir = temp_bids_dir + '.zip'
-    os.mkdir(temp_bids_dir)
+
     if True:
         # read the connectivity folder and all its dependenies from json file
         # and create a zip to upload
@@ -107,19 +101,15 @@ def create_bids_dataset(bids_data_to_import, bids_root_dir, bids_file_base_dir, 
             if len(sub_contents) == 0:
                 continue
 
-            # 1. creating subject folder
-            print("step 1 creating subject folder")
-            temp_sub_dir = temp_bids_dir + '/' + sub
-            print(temp_sub_dir)
-            os.mkdir(temp_sub_dir)
+           # 1. define a set to gather all necessary file paths in memory
+            files_to_archive = set()
 
-            # 2. copying sub_contents to temp_sub_dir
-            print("step 2. copying sub_contents to temp_sub_dir")
-            temp_sub_contents_path = temp_sub_dir + '/' + bids_data_to_import.value
-            print(temp_sub_contents_path)
-            copy_tree(sub_contents_path, temp_sub_contents_path)
+            # 2. add all file paths from the selected folder in set
+            for file_name in os.listdir(sub_contents_path):
+                files_to_archive.add(os.path.join(sub_contents_path, file_name))
+            print(files_to_archive)
 
-            # 3. reading json files present in the sub_contents path 
+            # 3. reading json files present in the sub_contents path
             print(sub_contents)
             json_files = filter(sub_contents, '.json')
             print(json_files)
@@ -155,22 +145,22 @@ def create_bids_dataset(bids_data_to_import, bids_root_dir, bids_file_base_dir, 
             for dependency_path in import_dependencies_paths:
                 print(dependency_path)
                 # print(json.load(open(bids_root_dir + '/' + dependency_path)))
-                print( file_path_creator(bids_root_dir, sub, dependency_path))
-                
+                abs_path = file_path_creator(bids_root_dir, sub, dependency_path)
+                print(abs_path)
+
                 try:
                     json_data = json.load(open(file_path_creator(bids_root_dir, sub, dependency_path)))
                     print(json_data)
-                    
-                    
+                    # Add json links to the files_to_archive set
+                    files_to_archive.add(abs_path)
+
                 except Exception as e:
                     print(e)
 
                 print("------------------------------------------")
 
-            shutil.make_archive(temp_bids_dir, 'zip', root_dir=bids_file_base_dir, base_dir=temp_bids_dir_name)
-            # os.remove(temp_bids_dir)
-
-
+            # Finally, create an archive with all file paths in the files_to_archive set
+            create_archive(files_to_archive, temp_bids_zip_dir, bids_root_dir)
 
 
 def file_path_creator(bids_root_dir, sub, path):
@@ -190,6 +180,6 @@ if __name__ == '__main__':
     # tvb_client = TVBClient(compute_rest_url())
     # tvb_client.browser_login()
     # upload_bids_data(tvb_client)
-    bids_root_dir = "C:/Users/upadh/Documents/GitHub/tvb-root/tvb_framework/tvb/interfaces/rest/client/examples/BIDS_DEMO_DATSET - Copy"
     bids_file_base_dir = "C:/Users/upadh/Documents/GitHub/tvb-root/tvb_framework/tvb/interfaces/rest/client/examples"
+    bids_root_dir = os.path.join(bids_file_base_dir, "BIDS_DEMO_DATSET - Copy")
     create_bids_dataset(BIDSUploadDataTypeOptionsEnum.TIME_SERIES, bids_root_dir, bids_file_base_dir, "BIDS_DEMO_DATSET - Copy")
